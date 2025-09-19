@@ -8,8 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\UserInterface\UserInterface.csproj" />
     <ProjectReference Include="..\SQLHandler\SQLHandler.csproj" />
+    <ProjectReference Include="..\UserInterface\UserInterface.csproj" />
   </ItemGroup>
 
 </Project>
