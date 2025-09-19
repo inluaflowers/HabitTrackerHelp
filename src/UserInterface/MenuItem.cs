@@ -17,12 +17,14 @@ public class Menu
     {
         _valueItems = GetItemsOfType(ItemDictionary, MenuEnum.Value);
         _navigationItem = GetItemsOfType(ItemDictionary, MenuEnum.Navigation);
+        SetPadding();
     }
     public void BuildFromDictionary(Dictionary<string, MenuItem> menuDictionary)
     {
         _valueItems = GetItemsOfType(menuDictionary, MenuEnum.Value);
         _navigationItem = GetItemsOfType(menuDictionary, MenuEnum.Navigation);
         ItemDictionary = menuDictionary;
+        SetPadding();
     }
 
     public static List<MenuItem> GetItemsOfType(Dictionary<string, MenuItem> menuDictionary, MenuEnum tEnum)
@@ -35,19 +37,47 @@ public class Menu
         return _valueItems.Concat(_navigationItem).ToList();
     }
 
+    public void SetPadding()
+    {
+
+        var keyLength = AllMenuItems().Select(p => p.ItemKey.Length).ToList().Max();
+        foreach (var item in AllMenuItems())
+        {
+            var diff = keyLength - item.ItemKey.Length;
+            item.SetPadding((diff + 10, diff + 10));
+        }
+
+    }
+
 }
-public class MenuItem(MenuEnum itemType, string itemKey, string? assignedName = null, float? assignedFloat = null)
+public class MenuItem
 {
-    public MenuEnum ItemType = itemType;
-    public string ItemKey { get; set; } = itemKey;
-    public string? AssignedName { get; set; } = assignedName;
-    public float? AssignedFloat { get; set; } = assignedFloat;
+    public MenuEnum ItemType;
+    public string ItemKey { get; set; }
+    public string? AssignedName { get; set; }
+    public float? AssignedFloat { get; set; }
+    public (int keyNamePadding, int nameFactorPadding) Padding { get; set; }
+
+    public string NamedItemString;
+    public string FactorString;
+
+    public MenuItem(MenuEnum itemType, string itemKey, string? assignedName = null, float? assignedFloat = null)
+    {
+        ItemType = itemType;
+        ItemKey = itemKey;
+        AssignedName = assignedName;
+        AssignedFloat = assignedFloat;
+    }
+
+    public void SetPadding((int keyNamePadding, int nameFactorPadding) padding)
+    {;
+        NamedItemString = (AssignedName != null ? ": " + AssignedName : "").PadLeft(padding.keyNamePadding);
+        FactorString = (AssignedFloat != null ? "Factor: " + AssignedFloat : "").PadLeft(padding.nameFactorPadding);
+    }
 
     public override string ToString()
     {
-        var namedItemString = AssignedName != null ? ":\t\t" + AssignedName  : "";
-        var floatValue = AssignedFloat != null ? "\n\tFactor: " + AssignedFloat.ToString() : "";
-        return $"{ItemKey}{namedItemString}{floatValue}";
+        return $"{ItemKey}{NamedItemString}{FactorString}";
     }
 }
 
